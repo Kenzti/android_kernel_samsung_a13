@@ -4,22 +4,13 @@ make clean && make mrproper
 
 export KERNEL_ROOT="$(pwd)"
 
-# Toolchain
+# Toolchain paths
 DIR="$(readlink -f .)"
 PARENT_DIR="$(readlink -f "${DIR}/..")"
 export PATH="$PARENT_DIR/clang-r450784d/bin:$PATH"
-export CC=clang
-export LD=ld.lld
-export CROSS_COMPILE=""
 
 # Build options for the kernel
 export BUILD_OPTIONS="
-ARCH=arm64 \
-LLVM=1 \
-LLVM_IAS=1 \
-CC=clang \
-LD=ld.lld \
-CROSS_COMPILE= \
 KCFLAGS=-w \
 PLATFORM_VERSION=14 \
 ANDROID_MAJOR_VERSION=14 \
