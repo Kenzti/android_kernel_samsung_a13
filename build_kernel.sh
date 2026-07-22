@@ -3,24 +3,19 @@
 DIR="$(readlink -f .)"
 PARENT_DIR="$(readlink -f "${DIR}/..")"
 
-export CROSS_COMPILE="$PARENT_DIR/clang-r450784d/bin/aarch64-linux-gnu-"
-export CC="$PARENT_DIR/clang-r450784d/bin/clang"
 export PATH="$PARENT_DIR/clang-r450784d/bin:$PATH"
-export LLVM_LDFLAGS="-fuse-ld=mold"
-export LD="mold"
+export CC=clang
+export LD=ld.lld
 export LLVM=1
+export LLVM_IAS=1
 export ARCH=arm64
-export PLATFORM_VERSION=13
-
-export KERNEL_ROOT="$(pwd)"
 
 BUILD_OPTIONS="
 ARCH=arm64 \
 LLVM=1 \
-LD=mold \
-LLVM_LDFLAGS=-fuse-ld=mold \
-CROSS_COMPILE=$PARENT_DIR/clang-r450784d/bin/aarch64-linux-gnu- \
-CC=$PARENT_DIR/clang-r450784d/bin/clang \
+LLVM_IAS=1 \
+CC=clang \
+LD=ld.lld \
 KCFLAGS=-w \
 KBUILD_BUILD_USER=ken \
 KBUILD_BUILD_HOST=pkenti
