@@ -1,19 +1,7 @@
 name: Release
-on:
-  push:
-    tags:
-      - "*"
-      
+on:  
   workflow_dispatch:
     inputs:
-      KERNEL_URL:
-        description: 'Kernel Source URL'
-        required: true
-        default: 'https://github.com/Kenzti/android_kernel_samsung_a13'
-      KERNEL_BRANCH:
-        description: 'Kernel Source Branch/Tag'
-        required: true
-        default: 'kernelsu'
       ADDSU:
         description: 'Add SuperUser'
         required: false
