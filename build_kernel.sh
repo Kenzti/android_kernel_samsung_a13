@@ -5,12 +5,10 @@ make clean && make mrproper
 export KERNEL_ROOT="$(pwd)"
 export PATH="$(readlink -f "${KERNEL_ROOT}/../clang-r450784d/bin"):${PATH}"
 
-
 # Build options for the kernel
 export BUILD_OPTIONS="
 ARCH=arm64 \
 LLVM=1 \
-LLVM_IAS=1 \
 KCFLAGS=-w \
 PLATFORM_VERSION=14 \
 ANDROID_MAJOR_VERSION=14 \
