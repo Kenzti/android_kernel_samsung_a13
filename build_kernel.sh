@@ -3,6 +3,8 @@
 make clean && make mrproper
 
 export KERNEL_ROOT="$(pwd)"
+export PATH="$(readlink -f "${KERNEL_ROOT}/../clang-r450784d/bin"):${PATH}"
+
 
 # Build options for the kernel
 export BUILD_OPTIONS="
