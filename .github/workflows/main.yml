@@ -1,0 +1,111 @@
+name: Release
+on:
+  push:
+    tags:
+      - "*"
+      
+  workflow_dispatch:
+    inputs:
+      KERNEL_URL:
+        description: 'Kernel Source URL'
+        required: true
+        default: 'https://github.com/Kenzti/android_kernel_samsung_a13'
+      KERNEL_BRANCH:
+        description: 'Kernel Source Branch/Tag'
+        required: true
+        default: 'kernelsu'
+      ADDSU:
+        description: 'Add SuperUser'
+        required: false
+        default: 'RKSU'
+        type: choice
+        options:
+          - 'No'
+          - 'RKSU'
+
+permissions:
+  contents: write
+
+jobs:
+  Enforcing:
+    runs-on: ubuntu-22.04
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v6
+    - name: Install tools
+      run: |
+        sudo apt-get install python2 pahole libelf-dev -y
+        DIR="$(readlink -f .)"
+        PARENT_DIR="$(readlink -f "${DIR}/..")"
+        git clone https://gitlab.com/tejas101k/clang-r450784d.git/ "$PARENT_DIR/clang-r450784d" --depth=1
+    - name: Debug Toolchain
+      run: |
+        DIR="$(readlink -f .)"
+        PARENT_DIR="$(readlink -f "${DIR}/..")"
+        echo "=== Contents of clang-r450784d/bin ==="
+        ls -la "$PARENT_DIR/clang-r450784d/bin/" | grep -E "clang$|aarch64|ld\.|as$"
+        echo "=== Check if aarch64-linux-gnu-as exists ==="
+        file "$PARENT_DIR/clang-r450784d/bin/aarch64-linux-gnu-as" 2>&1 || echo "NOT FOUND"
+    - uses: rui314/setup-mold@v1
+    - name: Add SuperUser
+      run: |
+        ADDSU="${{ inputs.ADDSU || 'RKSU' }}"
+        echo "SuperUser: $ADDSU"
+        if [[ "$ADDSU" == "RKSU" ]]; then
+          curl -LSs "https://raw.githubusercontent.com/rsuntk/KernelSU/main/kernel/setup.sh" | bash -
+        fi
+    - name: Build
+      run: |
+        bash build_kernel.sh
+    - name: Upload
+      uses: actions/upload-artifact@v7
+      with:
+        name: Enforcing-Build
+        path: kernel_build/langsdorff*
+  Permissive:
+    runs-on: ubuntu-22.04
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v6
+    - name: Install tools
+      run: |
+        sudo apt-get install python2 pahole libelf-dev -y
+        DIR="$(readlink -f .)"
+        PARENT_DIR="$(readlink -f "${DIR}/..")"
+        git clone https://gitlab.com/tejas101k/clang-r450784d.git/ "$PARENT_DIR/clang-r450784d" --depth=1
+    - uses: rui314/setup-mold@v1
+    - name: Build
+      run: |
+        bash build_kernel.sh
+    - name: Upload
+      uses: actions/upload-artifact@v7
+      with:
+        name: Permissive-Build
+        path: kernel_build/langsdorff*
+  ReleaseKernel:
+    runs-on: ubuntu-22.04
+    needs: [Enforcing, Permissive]
+    steps:
+      - name: Download Enforcing Build
+        uses: actions/download-artifact@v8
+        with:
+          name: Enforcing-Build
+          path: kernel_build/enforcing
+      - name: Download Permissive Build
+        uses: actions/download-artifact@v8
+        with:
+          name: Permissive-Build
+          path: kernel_build/permissive
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v3
+        with:
+          name: langsdorff@${{ github.ref_name }}
+          draft: false
+          prerelease: false
+          files: |
+            kernel_build/enforcing/langsdorff*
+            kernel_build/permissive/langsdorff*
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
