@@ -10,6 +10,7 @@ PARENT_DIR="$(readlink -f "${DIR}/..")"
 export PATH="$PARENT_DIR/clang-r450784d/bin:$PATH"
 export CC=clang
 export LD=ld.lld
+export CROSS_COMPILE="$PARENT_DIR/clang-r450784d/bin/aarch64-linux-gnu-"
 
 # Build options for the kernel
 export BUILD_OPTIONS="
@@ -18,6 +19,7 @@ LLVM=1 \
 LLVM_IAS=1 \
 CC=clang \
 LD=ld.lld \
+CROSS_COMPILE=$PARENT_DIR/clang-r450784d/bin/aarch64-linux-gnu- \
 KCFLAGS=-w \
 PLATFORM_VERSION=14 \
 ANDROID_MAJOR_VERSION=14 \
