@@ -15,6 +15,18 @@ NAME = "People's Front"
 PHONY := _all
 _all:
 
+# Set variables while building with aosp build system
+ARCH := arm64
+CROSS_COMPILE := aarch64-linux-gnu-
+LLVM := 1
+LLVM_IAS := 1
+
+# Export them
+export ARCH
+export CROSS_COMPILE
+export LLVM
+export LLVM_IAS
+
 # o Do not use make's built-in rules and variables
 #   (this increases performance and avoids hard-to-debug behaviour);
 # o Look for make include files relative to root of kernel src
