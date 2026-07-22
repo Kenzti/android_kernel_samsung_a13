@@ -54,41 +54,17 @@ jobs:
       with:
         name: Enforcing-Build
         path: kernel_build/langsdorff*
-  Permissive:
-    runs-on: ubuntu-22.04
-
-    steps:
-    - name: Checkout
-      uses: actions/checkout@v6
-    - name: Install tools
-      run: |
-        sudo apt-get install python2 pahole libelf-dev -y
-        DIR="$(readlink -f .)"
-        PARENT_DIR="$(readlink -f "${DIR}/..")"
-        git clone https://gitlab.com/tejas101k/clang-r450784d.git/ "$PARENT_DIR/clang-r450784d" --depth=1
-    - uses: rui314/setup-mold@v1
-    - name: Build
-      run: |
-        bash build_kernel.sh
-    - name: Upload
-      uses: actions/upload-artifact@v7
-      with:
-        name: Permissive-Build
-        path: kernel_build/langsdorff*
+  
   ReleaseKernel:
     runs-on: ubuntu-22.04
-    needs: [Enforcing, Permissive]
+    needs: [Enforcing]
     steps:
       - name: Download Enforcing Build
         uses: actions/download-artifact@v8
         with:
           name: Enforcing-Build
           path: kernel_build/enforcing
-      - name: Download Permissive Build
-        uses: actions/download-artifact@v8
-        with:
-          name: Permissive-Build
-          path: kernel_build/permissive
+          
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v3
         with:
@@ -97,6 +73,5 @@ jobs:
           prerelease: false
           files: |
             kernel_build/enforcing/langsdorff*
-            kernel_build/permissive/langsdorff*
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
