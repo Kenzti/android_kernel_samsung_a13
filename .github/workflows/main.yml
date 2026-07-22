@@ -39,6 +39,14 @@ jobs:
         DIR="$(readlink -f .)"
         PARENT_DIR="$(readlink -f "${DIR}/..")"
         git clone https://gitlab.com/tejas101k/clang-r450784d.git/ "$PARENT_DIR/clang-r450784d" --depth=1
+    - name: Debug Toolchain
+      run: |
+        DIR="$(readlink -f .)"
+        PARENT_DIR="$(readlink -f "${DIR}/..")"
+        echo "=== Contents of clang-r450784d/bin ==="
+        ls -la "$PARENT_DIR/clang-r450784d/bin/" | grep -E "clang$|aarch64|ld\.|as$"
+        echo "=== Check if aarch64-linux-gnu-as exists ==="
+        file "$PARENT_DIR/clang-r450784d/bin/aarch64-linux-gnu-as" 2>&1 || echo "NOT FOUND"
     - uses: rui314/setup-mold@v1
     - name: Add SuperUser
       run: |
