@@ -55,6 +55,9 @@ jobs:
         if [[ "$ADDSU" == "RKSU" ]]; then
           curl -LSs "https://raw.githubusercontent.com/rsuntk/KernelSU/main/kernel/setup.sh" | bash -
         fi
+    - name: Extract AnyKernel3
+      run: |
+        unzip -o AnyKernel3.zip -d AnyKernel3
     - name: Build
       run: |
         bash build_kernel.sh
