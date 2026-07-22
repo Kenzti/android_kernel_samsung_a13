@@ -9,6 +9,9 @@ DIR="$(readlink -f .)"
 PARENT_DIR="$(readlink -f "${DIR}/..")"
 export PATH="$PARENT_DIR/clang-r450784d/bin:$PATH"
 
+# Symlink readelf for FIPS integrity script
+ln -sf /usr/bin/readelf "$PARENT_DIR/clang-r450784d/bin/aarch64-linux-gnu-readelf"
+
 # Build options for the kernel
 export BUILD_OPTIONS="
 KCFLAGS=-w \
