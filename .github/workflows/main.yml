@@ -53,7 +53,7 @@ jobs:
       uses: actions/upload-artifact@v7
       with:
         name: Enforcing-Build
-        path: kernel_build/langsdorff*
+        path: AnyKernel3/A135F-KVM.zip
   
   ReleaseKernel:
     runs-on: ubuntu-22.04
@@ -68,10 +68,10 @@ jobs:
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v3
         with:
-          name: langsdorff@${{ github.ref_name }}
+          name: A135F-KVM@${{ github.ref_name }}
           draft: false
           prerelease: false
           files: |
-            kernel_build/enforcing/langsdorff*
+            kernel_build/enforcing/A135F-KVM.zip
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
