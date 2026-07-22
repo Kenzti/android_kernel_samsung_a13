@@ -316,10 +316,12 @@ int vgic_init(struct kvm *kvm)
 	}
 
 	if (vgic_has_its(kvm)) {
+#ifdef CONFIG_ARM_GIC_V3_ITS
 		ret = vgic_v4_init(kvm);
 		if (ret)
 			goto out;
-	}
+#endif
+}
 
 	kvm_for_each_vcpu(i, vcpu, kvm)
 		kvm_vgic_vcpu_enable(vcpu);
@@ -358,8 +360,9 @@ static void kvm_vgic_dist_destroy(struct kvm *kvm)
 	}
 
 	if (vgic_supports_direct_msis(kvm))
+#ifdef CONFIG_ARM_GIC_V3_ITS
 		vgic_v4_teardown(kvm);
-}
+#endif
 
 void kvm_vgic_vcpu_destroy(struct kvm_vcpu *vcpu)
 {
